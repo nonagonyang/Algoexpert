@@ -126,3 +126,99 @@ class TreeInfo:
     def __init__(self, diameter, height):
         self.diameter=diameter
         self.height=height
+
+
+#given a binary tree, do an inorder traverse
+#find a succesor of a given node in that binary tree
+
+#Solution1 
+#in order traverse the tree and save the node traversed in an list
+class BinaryTree:
+    def __init__(self, value, left=None, right=None, parent=None):
+        self.value = value
+        self.left = left
+        self.right = right
+        self.parent = parent
+
+
+def findSuccessor(tree, node):
+    inOrderTraverseArray=inOrderTraverse(tree)
+    for idx, currentNode in enumerate(inOrderTraverseArray):
+        if currentNode !=node:
+            continue
+        if idx== len(inOrderTraverseArray)-1:
+            return None
+        return inOrderTraverseArray[idx+1]
+        
+
+def inOrderTraverse(node, arr=[]):
+    if node is None:
+        return arr
+    inOrderTraverse(node.left)
+    arr.append(node)
+    inOrderTraverse(node.right)
+    return arr
+
+
+#Solution2 
+#the successor of each node is like this"
+#if it has right subtree, the successor will be the left most node in the right subtree
+#if it does not have a right subtree, we need to travel up to find its unvisited ancestors
+#its unvisited ancestor will be the ancestor of which the node is its left children. 
+#this solution only works if the BinaryTree class has a parent pointer.
+class BinaryTree:
+    def __init__(self, value, left=None, right=None, parent=None):
+        self.value = value
+        self.left = left
+        self.right = right
+        self.parent = parent
+
+def findSuccessor(tree, node):
+    if node.right is not None:
+        return getLeftmostChild(node.right)
+    return getRightmostParent(node)
+
+def getLeftmostChild(node):
+    currentNode=node
+    while currentNode.left is not None:
+        currentNode=currentNode.left
+    return currentNode
+def getRightmostParent(node):
+    currentNode=node
+    while currentNode.parent is not None and currentNode.parent.right== currentNode:
+        currentNode=currentNode.parent
+    return currentNode.parent
+
+
+# is a binary tree is height balanced? 
+
+#its left and right subtrees are all height balanced
+#itself is height balanced
+#the isBalanced will be bubble up, at any point it is not balanced, it will not be balanced
+#the height will be continously calculated 
+#for any  node, its height is 1+ max(heightOfLeftSubtree, heightOfRightSubtree)
+
+class BinaryTree:
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+class TreeInfo:
+    def __init__(self, isBalanced, height):
+        self.isBalanced=isBalanced
+        self.height=height
+
+def heightBalancedBinaryTree(tree):
+    treeInfo=getTreeInfo(tree)
+    return treeInfo.isBalanced
+    
+    
+def getTreeInfo(node):
+    if node==None:
+        return TreeInfo(True,-1)
+    leftSubtreeInfo=getTreeInfo(node.left)
+    rightSubtreeInfo=getTreeInfo(node.right)
+    isBalanced= leftSubtreeInfo.isBalanced and rightSubtreeInfo.isBalanced and abs(leftSubtreeInfo.height-rightSubtreeInfo.height)<=1
+    height=max(leftSubtreeInfo.height, rightSubtreeInfo.height) +1
+    return TreeInfo(isBalanced, height)
